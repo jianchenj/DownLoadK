@@ -1,7 +1,7 @@
 package com.pptv.httpsproject
 
+import android.app.Activity
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.doAsync
@@ -10,7 +10,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import kotlin.concurrent.thread
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : Activity() {
 
     //懒加载初始化View
     val mBtnBuy by lazy {
@@ -35,6 +35,8 @@ class MainActivity : AppCompatActivity() {
         thread(true) {
 
         }
+//        var www = WeakReference(aaa())
+//        var baaa  = ProgressDownSubscriber(DownLoadInfo(), { www })
     }
 
     var sendHttps = {
@@ -60,4 +62,23 @@ class MainActivity : AppCompatActivity() {
             Log.d("test1126", result)
         }
     }
+
+//    inner class aaa : HttpProgressOnNextListener<DownLoadInfo>() {
+//        override fun onNext(t: DownLoadInfo) {
+//            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+//        }
+//
+//        override fun onComplete() {
+//            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+//        }
+//
+//        override fun onProgress(readLength: Long, countLength: Long) {
+//            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+//        }
+//
+//        override fun onError(e: Throwable) {
+//            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+//        }
+//
+//    }
 }

@@ -1,9 +1,14 @@
 package com.pptv.httpsproject.exception
 
+import android.util.Log
 import io.reactivex.Observable
 import io.reactivex.ObservableSource
 import io.reactivex.functions.BiFunction
 import io.reactivex.functions.Function
+import java.net.ConnectException
+import java.net.SocketTimeoutException
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 
 class RetryWhenNetWorkException @JvmOverloads constructor(
     var count: Int = 3,//重试次数
@@ -13,8 +18,20 @@ class RetryWhenNetWorkException @JvmOverloads constructor(
 
 
     override fun apply(input: Observable<out Throwable>): ObservableSource<Any> {
-        // zipWith
-        return input.zipWith(Observable.range(1, count + 1), object : BiFunction<Throwable, Int, Wrapper>)
+        // zipWith 打包
+        return input.zipWith(Observable.range(1, count + 1),
+            BiFunction<Throwable, Int, Wrapper> { t1, t2 -> Wrapper(index = t2, throwable = t1) }
+        ).flatMap(Function<Wrapper, ObservableSource<*>> { wrapper ->
+            //如果超出重试次数也抛出错误，否则默认是会进入onCompleted
+            if ((wrapper.throwable is ConnectException
+                        || wrapper.throwable is SocketTimeoutException
+                        || wrapper.throwable is TimeoutException) && wrapper.index < count + 1
+            ) {
+                Log.e("tag", "retry---->" + wrapper.index)
+                return@Function Observable.timer(delay + (wrapper.index - 1) * increaseDelay, TimeUnit.MILLISECONDS)
+            }
+            return@Function Observable.error<Any>(wrapper.throwable)
+        })
     }
 
     /**
@@ -22,7 +39,5 @@ class RetryWhenNetWorkException @JvmOverloads constructor(
      *  如果需要在内部类引用外部类的对象，可以使用inner声明内部类，
      *  使内部类变为非静态的，通过this@外部类名，指向外部类
      * */
-    private inner class Wrapper {
-
-    }
+    private inner class Wrapper internal constructor(var index: Int, var throwable: Throwable)
 }
