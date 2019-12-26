@@ -10,8 +10,7 @@ import com.pptv.httpsproject.httpdownload.DownLoadState
 import com.pptv.httpsproject.httpdownload.HttpDownLoadManager
 import com.pptv.httpsproject.httpdownload.listener.HttpProgressOnNextListener
 import com.pptv.httpsproject.utils.UpdateChecker
-
-import kotlinx.android.synthetic.main.activity_main.* //来自 kotlin-android-extensions 但是只能找到本工程下的R文件，第三方的不行
+import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import kotlinx.android.synthetic.main.activity_main.btn_pauseDown_alipay as btnPauseAli
 
@@ -40,6 +39,15 @@ class MainActivity : Activity(), View.OnClickListener {
         qqDownInfo.downLoadState = DownLoadState.START
     }
 
+
+    fun updateDialog(view: View?) {
+        UpdateChecker.checkForDialog(this, dialog)
+    }
+
+    fun updateNotification(view: View?) {
+        //UpdateChecker.checkForNotification(this, dialog)
+    }
+
     override fun onClick(v: View?) {
         when (v!!.id) {
             R.id.btn_startDown_qq -> {
@@ -63,15 +71,6 @@ class MainActivity : Activity(), View.OnClickListener {
 
                     })
             }
-        }
-
-
-        fun updateDialog(view: View) {
-            UpdateChecker.checkForDialog(this, dialog)
-        }
-
-        fun updateNotification(view: View) {
-            //UpdateChecker.checkForNotification(this, dialog)
         }
     }
 
