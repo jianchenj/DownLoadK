@@ -6,7 +6,6 @@
 
 在网上看到一个demo https://www.jianshu.com/p/2a27c52f7811
 使用 retrofit2 + rxjava2 + okhttp3 完成下载
-现尝试使用 kotlin实现 rxkotlin 代替 rxjava2
 另外尝试使用 Coroutines+Retrofit+Okhttp 完成下载
 
 

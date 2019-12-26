@@ -3,13 +3,11 @@ package com.pptv.httpsproject.service
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
+import android.widget.Toast
 import com.pptv.httpsproject.httpdownload.DownLoadInfo
 import com.pptv.httpsproject.httpdownload.HttpDownLoadManager
 import com.pptv.httpsproject.httpdownload.listener.HttpProgressOnNextListener
-import com.pptv.httpsproject.utils.Constants
-import com.pptv.httpsproject.utils.NotificationBarUtil
-import com.pptv.httpsproject.utils.NotificationHelper
-import com.pptv.httpsproject.utils.StorageUtils
+import com.pptv.httpsproject.utils.*
 import java.io.File
 
 class DownLoadService : Service() {
@@ -18,7 +16,7 @@ class DownLoadService : Service() {
         DownLoadInfo()
     }
 
-    private var onlProgress: Int = 0
+    private var oldProgress: Int = 0
     private val notificatonHelper: NotificationHelper by lazy {
         NotificationHelper(this)
     }
@@ -40,26 +38,33 @@ class DownLoadService : Service() {
     }
 
     override fun onBind(intent: Intent?): IBinder? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return null
     }
 
     private fun downloadFile() {
         HttpDownLoadManager.startDownLoad(downInfo, object : HttpProgressOnNextListener<DownLoadInfo>() {
             override fun onNext(t: DownLoadInfo) {
+                //收起通知栏
                 NotificationBarUtil.setNotificationBarVisibility(this@DownLoadService, false);
-                
+                //安装
+                ApkUtils.installApk(this@DownLoadService, File(downInfo.savPath))
             }
 
             override fun onComplete() {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                notificatonHelper.cancel()
+                stopSelf()
             }
 
             override fun onProgress(readLength: Long, countLength: Long) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                val progress = (readLength * 100 / countLength).toInt()
+                if (progress != oldProgress) {
+                    notificatonHelper.updateProgress(progress)
+                    oldProgress = progress
+                }
             }
 
             override fun onError(e: Throwable) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                Toast.makeText(this@DownLoadService, e.message, Toast.LENGTH_SHORT).show()
             }
 
         })

@@ -8,14 +8,17 @@ import java.util.concurrent.TimeUnit
 class OkHttpUtils {
     companion object {
         var okHttpClient: OkHttpClient? = null
-        var retrofit: Retrofit? = null
-        fun getRetrofit() {
-            if (retrofit == null) {
+        private var retrofit: Retrofit? = null
+        fun getRetrofit() : Retrofit{
+            return if (retrofit == null) {
                 retrofit = Retrofit.Builder()
                     .baseUrl("https://raw.githubusercontent.com/wj576038874/mvp-rxjava-retrofit-okhttp/master/")
                     .client(getOkHttpClient1())
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .build()
+                retrofit!!
+            } else{
+                retrofit!!
             }
         }
 

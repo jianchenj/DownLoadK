@@ -2,7 +2,15 @@ package com.pptv.httpsproject.httpdownload
 
 import com.pptv.httpsproject.http.HttpService
 
-class DownLoadInfo {
+class DownLoadInfo{
+
+    constructor() {
+
+    }
+
+    constructor(url: String?) {
+
+    }
     //下载存储位置
     var savPath: String? = null
 
